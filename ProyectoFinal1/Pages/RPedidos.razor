@@ -1,0 +1,253 @@
+﻿@page "/rpedidos"
+@using ProyectoFinal1.Controllers
+@using ProyectoFinal1.Data
+@using ProyectoFinal1.Modals
+
+<h1>Registro Usuario</h1>
+
+<EditForm Model="@pedidos" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="container">
+        <label for="PedidosId" class="col-md-2 col-form-label"> PedidosId</label>
+        <input type="number" class="col-md-2 form-check" @bind="pedidos.PedidosId" />
+        <br />
+
+        <button type="button" class="col-md-2 btn btn-info" @onclick="Buscar">Buscar</button>
+
+    </div>
+    <div class="container">
+        <label for="Cliente" class="col-md-2 col-form-label">Cliente</label>
+        <input type="text" class="form-check col-md-2" @bind="pedidos.Cliente" />
+    </div>
+    <div class="container">
+        <label for="FormaPedido" class="col-md-2 col-form-label">FormaPedido</label>
+        <input type="text" class="form-check col-md-2" @bind="pedidos.FormaPedido" />
+    </div>
+    <div class="container">
+        <label for="Fecha" class="col-md-2col-form-label">Fecha</label>
+        <input type="datetime" class="col-md-2 form-check" @bind="pedidos.FechaPedido" />
+    </div>
+    <div class="container">
+        <label for="Producto">Producto</label>
+        <div class="col-md-2">
+            <InputSelect @bind-Value="@ProductoSeleccionado" class="form-control" @onchange="CargarProducto" @onclick="CargarProducto">
+                @foreach (var item in listaProductos)
+                {
+                    <option value="@item.ProductoId">@item.Descripcion</option>
+                }
+            </InputSelect>
+
+        </div>
+    </div>
+    <div class="container">
+        <label for="Cantidad" class="col-md-2col-form-label">Cantidad</label>
+        <input type="datetime" class="col-md-2 form-check" @bind="pedidos.Cantidad" />
+    </div>
+    <div class="container">
+        <h3>@disponible</h3>       
+    </div>
+    <div class=" container">
+        <button type="button" class="btn btn-primary" @onclick="AgregarProducto">AgregarProducto</button>
+    </div>
+    <div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>ProductoId</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (listaProductos.Count == 0)
+                {
+                    <option value="-1">No hay Asignatura</option>
+                }
+                else
+                {
+                    @foreach (var item in pedidos.Detalles)
+                    {
+                        <tr>
+                            <th>@item.PedidosDetalleId</th>
+                            <th>@item.ProductoId</th>
+                            <th>@item.Cantidad</th>
+                            <th>@item.Precio</th>
+
+
+                        </tr>
+                    }
+                }
+
+            </tbody>
+        </table>
+    </div>
+    <div class="container">
+        <label for="ITBIS" class="col-md-2col-form-label">ITBIS</label>
+        <input type="number" class="col-md-2 form-check" @bind="pedidos.ITBIS" />
+    </div>
+    <div class="container">
+        <label for="SubTotal" class="col-md-2col-form-label">SubTotal</label>
+        <input type="number" class="col-md-2 form-check" @bind="pedidos.SubTotal" />
+    </div>
+    <div class="container">
+        <label for="Total" class="col-md-2col-form-label">Total</label>
+        <input type="number" class="col-md-2 form-check" @bind="pedidos.Total" />
+    </div>
+
+    <br />
+
+    <div class="form-group">
+        <button type="submit" class="col-md-2 btn btn-primary">Guardar</button>
+        <button type="button" class="col-md-2 btn btn-info" @onclick="Limpiar">Limpiar</button>
+        <button type="button" class="col-md-2 btn btn-danger" @onclick="Eliminar">Eliminar</button>
+    </div>
+
+    <h3>@Mensaje</h3>
+</EditForm>
+
+
+@code {
+
+    ControllersPedidos controllers = new ControllersPedidos();
+    ControllersProductos controllersProductos = new ControllersProductos();
+
+    private List<Productos> listaProductos = new List<Productos>();
+
+    private string ProductoSeleccionado { get; set; }
+    public int disponible = 0;
+
+    private Productos productos;
+    Pedidos pedidos = new Pedidos();
+    public string Mensaje;
+    Contexto db = new Contexto();
+
+    protected override void OnInitialized()
+    {
+        listaProductos = controllersProductos.GetList(e => true);
+
+        base.OnInitialized();
+    }
+
+
+    private void Guardar()
+    {
+        pedidos.ProductoId = Convert.ToInt32(ProductoSeleccionado);
+        if (pedidos.PedidosId == 0)
+        {
+            controllers.Guardar(pedidos);
+            Mensaje = "Guardo";
+            Limpiar();
+        }
+        else
+        {
+            if (controllers.Buscar(pedidos.PedidosId) != null)
+            {
+                controllers.Modificar(pedidos);
+                Mensaje = "Modifico";
+                Limpiar();
+            }
+
+        }
+    }
+    public void CargarProducto()
+    {
+        try
+        {
+            productos = controllersProductos.Buscar(Convert.ToInt32(ProductoSeleccionado));
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+    private void Limpiar()
+    {
+        pedidos = new Pedidos();
+    }
+    private void Eliminar()
+    {
+        if (pedidos.PedidosId != 0)
+        {
+            if (controllers.Buscar(pedidos.PedidosId) != null)
+            {
+
+                controllers.Eliminar(pedidos.PedidosId);
+                Mensaje = "Eliminado";
+                Limpiar();
+
+            }
+            else
+            {
+                Mensaje = "Id no existe";
+            }
+
+        }
+        else
+        {
+            Mensaje = "Selecione un ID";
+        }
+
+    }
+    private void Buscar()
+    {
+        if (pedidos.PedidosId != 0)
+        {
+            if (controllers.Buscar(pedidos.PedidosId) != null)
+            {
+
+                pedidos = controllers.Buscar(pedidos.PedidosId);
+
+            }
+            else
+            {
+                Mensaje = "Id no existe";
+            }
+
+        }
+        else
+        {
+            Mensaje = "Selecione un ID";
+        }
+
+
+    }
+    private void AgregarProducto()
+    {
+        if(productos == null)
+        {
+            Mensaje = "debe seleccionar un producto";
+        }
+        else
+        {
+            if(pedidos.Detalles.Any(i => i.ProductoId == productos.ProductoId))
+            {
+                Mensaje = "Este producto ya esta seleccionado";
+            }
+            else
+            {
+                var prod = controllersProductos.Buscar(Convert.ToInt32(ProductoSeleccionado));
+
+                pedidos.Detalles.Add(new PedidosDetalle()
+                {
+                    PedidosId = pedidos.PedidosId,
+                    ProductoId = Convert.ToInt32(ProductoSeleccionado),
+                    Cantidad = pedidos.Cantidad,
+                    Precio = prod.Precio
+
+                });
+                productos = new Productos();
+
+                foreach (var item in pedidos.Detalles)
+                {
+                    pedidos.SubTotal += item.Cantidad * item.Precio;
+                }
+                pedidos.ITBIS = 100;
+                pedidos.Total = pedidos.ITBIS + pedidos.SubTotal;
+            }
+        }
+    }
+}

@@ -1,0 +1,140 @@
+﻿@page "/rproductos"
+@using ProyectoFinal1.Controllers
+@using ProyectoFinal1.Data
+@using ProyectoFinal1.Modals
+
+<h1>Registro Productos</h1>
+
+<EditForm Model="@productos" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="container">
+        <label for="ProductoId" class="col-md-2 col-form-label"> ProductoId</label>
+        <input type="number" class="col-md-2 form-check" @bind="productos.ProductoId" />
+        <br />
+
+        <button type="button" class="col-md-2 btn btn-info" @onclick="Buscar">Buscar</button>
+
+    </div>
+    <div class="container">
+        <label for="Descripcion" class="col-md-2 col-form-label">Descripcion</label>
+        <input type="text" class="form-check col-md-2" @bind="productos.Descripcion" />
+    </div>
+    <div class="container">
+        <label for="NombreProveedor" class="col-md-2 col-form-label">Nombre Proveedor</label>
+        <input type="text" class="form-check col-md-2" @bind="productos.NombreProveedor" />
+    </div>
+    <div class="container">
+        <label for="Cantidad" class="col-md-2col-form-label">Cantidad</label>
+        <input type="number" class="col-md-2 form-check" @bind="productos.Cantidad" />
+    </div>
+    <div class="container">
+        <label for="Precio" class="col-md-2col-form-label">Precio</label>
+        <input type="number" class="col-md-2 form-check" @bind="productos.Precio" />
+    </div>
+    <div class="container">
+        <label for="FechaIngreso" class="col-md-2 col-form-label"> Fecha</label>
+        <input type="datetime" class="col-md-2 form-check" @bind="productos.FechaIngreso" />
+    </div>
+    <div class="container">
+        <label for="Costo" class="col-md-2 col-form-label"> Costo</label>
+        <input type="number" class="col-md-2 form-check " @bind="productos.Costo" />
+    </div>
+    <div class="container">
+        <label for="Ganancia" class="col-md-2 col-form-label">Ganancia</label>
+        <input type="number" class="col-md-2 form-check " @bind="productos.Ganancia" />
+    </div>
+    <div class="container">
+        <label for="ITBIS" class="col-md-2 col-form-label">ITBIS</label>
+        <input type="number" class="col-md-2 form-check " @bind="productos.ITBIS" />
+    </div>
+    <br />
+
+    <div class="form-group">
+        <button type="submit" class="col-md-2 btn btn-primary">Guardar</button>
+        <button type="button" class="col-md-2 btn btn-info" @onclick="Limpiar">Limpiar</button>
+        <button type="button" class="col-md-2 btn btn-danger" @onclick="Eliminar">Eliminar</button>
+    </div>
+
+    <h3>@Mensaje</h3>
+</EditForm>
+
+
+@code {
+    ControllersProductos controllers = new ControllersProductos();
+    Productos productos = new Productos();
+    
+    public string Mensaje;
+
+    private void Guardar()
+    {
+        if (productos.ProductoId == 0)
+        {
+            controllers.Guardar(productos);
+            Mensaje = "Guardo";
+            Limpiar();
+        }
+        else
+        {
+            if (controllers.Buscar(productos.ProductoId) != null)
+            {
+                controllers.Modificar(productos);
+                Mensaje = "Modifico";
+                Limpiar();
+            }
+
+        }
+    }
+    private void Limpiar()
+    {
+        productos = new Productos();
+    }
+    private void Eliminar()
+    {
+        if (productos.ProductoId != 0)
+        {
+            if (controllers.Buscar(productos.ProductoId) != null)
+            {
+
+                controllers.Eliminar(productos.ProductoId);
+                Mensaje = "Eliminado";
+                Limpiar();
+
+            }
+            else
+            {
+                Mensaje = "Id no existe";
+            }
+
+        }
+        else
+        {
+            Mensaje = "Selecione un ID";
+        }
+
+    }
+    private void Buscar()
+    {
+        if (productos.ProductoId != 0)
+        {
+            if (controllers.Buscar(productos.ProductoId) != null)
+            {
+
+                productos = controllers.Buscar(productos.ProductoId);
+
+            }
+            else
+            {
+                Mensaje = "Id no existe";
+            }
+
+        }
+        else
+        {
+            Mensaje = "Selecione un ID";
+        }
+
+
+    }
+}

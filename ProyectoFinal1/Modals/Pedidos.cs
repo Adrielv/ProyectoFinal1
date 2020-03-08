@@ -13,10 +13,12 @@ namespace ProyectoFinal1.Modals
         public int PedidosId { get; set; }
         public DateTime FechaPedido { get; set; }
 
-
         public string Cliente { get; set; }
 
         public string FormaPedido { get; set; }
+        public int ProductoId { get; set; }
+
+        public int Cantidad { get; set; }
         public decimal Total { get; set; }
         public decimal SubTotal { get; set; }
         public decimal ITBIS { get; set; }
@@ -30,6 +32,7 @@ namespace ProyectoFinal1.Modals
             FechaPedido = DateTime.Now;
             Cliente = string.Empty;
             FormaPedido = string.Empty;
+            ProductoId = 0;
             Total = 0;
             SubTotal = 0;
             ITBIS = 0;

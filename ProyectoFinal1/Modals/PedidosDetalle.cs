@@ -17,7 +17,7 @@ namespace ProyectoFinal1.Modals
 
         public decimal Precio { get; set; }
 
-        public decimal Impuesto { get; set; }
+        
 
         public PedidosDetalle()
         {
@@ -26,7 +26,7 @@ namespace ProyectoFinal1.Modals
             ProductoId = 0;
             Cantidad = 0;
             Precio = 0;
-            Impuesto = 0;
+            
         }
     }
 }

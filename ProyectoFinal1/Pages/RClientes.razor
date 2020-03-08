@@ -1,0 +1,121 @@
+﻿@page "/rclientes"
+@using ProyectoFinal1.Controllers
+@using ProyectoFinal1.Data
+@using ProyectoFinal1.Modals
+
+<h1>Registro Usuario</h1>
+
+<EditForm Model="@clientes" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="container">
+        <label for="ClienteId" class="col-md-2 col-form-label"> ClienteId</label>
+        <input type="number" class="col-md-2 form-check" @bind="clientes.ClienteId" />
+        <br />
+
+        <button type="button" class="col-md-2 btn btn-info" @onclick="Buscar">Buscar</button>
+
+    </div>
+    <div class="container">
+        <label for="Nombre" class="col-md-2 col-form-label">Nombre</label>
+        <input type="text" class="form-check col-md-2" @bind="clientes.Nombre" />
+    </div>
+    <div class="container">
+        <label for="Email" class="col-md-2 col-form-label">Email</label>
+        <input type="text" class="form-check col-md-2" @bind="clientes.Email" />
+    </div>
+    <div class="container">
+        <label for="Telefono" class="col-md-2col-form-label">Telefono</label>
+        <input type="text" class="col-md-2 form-check" @bind="clientes.Telefono" />
+    </div>
+    
+    <br />
+
+    <div class="form-group">
+        <button type="submit" class="col-md-2 btn btn-primary">Guardar</button>
+        <button type="button" class="col-md-2 btn btn-info" @onclick="Limpiar">Limpiar</button>
+        <button type="button" class="col-md-2 btn btn-danger" @onclick="Eliminar">Eliminar</button>
+    </div>
+
+    <h3>@Mensaje</h3>
+</EditForm>
+
+
+@code {
+    ControllersCliente controllers = new ControllersCliente();
+    
+    Clientes clientes = new Clientes();
+    public string Mensaje;
+
+    private void Guardar()
+    {
+        if (clientes.ClienteId == 0)
+        {
+            controllers.Guardar(clientes);
+            Mensaje = "Guardo";
+            Limpiar();
+        }
+        else
+        {
+            if (controllers.Buscar(clientes.ClienteId) != null)
+            {
+                controllers.Modificar(clientes);
+                Mensaje = "Modifico";
+                Limpiar();
+            }
+
+        }
+    }
+    private void Limpiar()
+    {
+        clientes = new Clientes();
+    }
+    private void Eliminar()
+    {
+        if (clientes.ClienteId != 0)
+        {
+            if (controllers.Buscar(clientes.ClienteId) != null)
+            {
+
+                controllers.Eliminar(clientes.ClienteId);
+                Mensaje = "Eliminado";
+                Limpiar();
+
+            }
+            else
+            {
+                Mensaje = "Id no existe";
+            }
+
+        }
+        else
+        {
+            Mensaje = "Selecione un ID";
+        }
+
+    }
+    private void Buscar()
+    {
+        if (clientes.ClienteId != 0)
+        {
+            if (controllers.Buscar(clientes.ClienteId) != null)
+            {
+
+                clientes = controllers.Buscar(clientes.ClienteId);
+
+            }
+            else
+            {
+                Mensaje = "Id no existe";
+            }
+
+        }
+        else
+        {
+            Mensaje = "Selecione un ID";
+        }
+
+
+    }
+}
