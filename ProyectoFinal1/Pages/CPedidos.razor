@@ -1,0 +1,54 @@
+﻿@page "/cpedidos"
+@using ProyectoFinal1.Controllers
+@using ProyectoFinal1.Modals
+
+<h1>Consulta Llamadas</h1>
+<br />
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>PedidosId</th>
+            <th>Fecha</th>
+            <th>FormaPedido</th>
+            <th>Cantidad</th>
+            <th>Total</th>
+            <th>SubTotal</th>
+            <th>ITBIS</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in lista)
+        {
+        <tr>
+            <th>@item.PedidosId</th>
+            <th>@item.FechaPedido</th>
+            <th>@item.FormaPedido</th>
+            <th>@item.Cantidad</th>
+            <th>@item.Total</th>
+            <th>@item.SubTotal</th>
+            <th>@item.ITBIS</th>
+
+
+        </tr>
+        }
+
+    </tbody>
+</table>
+
+
+
+@code {
+
+    public List<Pedidos> lista { get; set; }
+    public ControllersPedidos controllers = new ControllersPedidos();
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        lista = controllers.GetList(P => true);
+    }
+
+}

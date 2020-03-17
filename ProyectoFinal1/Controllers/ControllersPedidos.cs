@@ -26,7 +26,7 @@ namespace ProyectoFinal1.Controllers
                     producto.Cantidad -= item.Cantidad;
                     Controproductos.Modificar(producto);
                 }
-                       
+                    db.Pedidos.Add(pedidos); 
                    paso = db.SaveChanges() > 0;
                 
 
@@ -70,7 +70,10 @@ namespace ProyectoFinal1.Controllers
 
             try
             {
-                pedidos = db.Pedidos.Find(id);
+                pedidos = db.Pedidos.Where(A=> A.PedidosId == id)
+                    .Include(A => A.Detalles)
+                    .FirstOrDefault();
+
             }
             catch (Exception)
             {

@@ -32,7 +32,8 @@
     <div class="container">
         <label for="Producto">Producto</label>
         <div class="col-md-2">
-            <InputSelect @bind-Value="@ProductoSeleccionado" class="form-control" @onchange="CargarProducto" @onclick="CargarProducto">
+            <InputSelect @bind-Value="@ProductoSeleccionado" class="form-control" @onchange="CargarProducto" @onclick="CargarProducto"@onfocusout="CargarCantidad">
+                <option value="" disabled selected>Seleccione un Producto</option>
                 @foreach (var item in listaProductos)
                 {
                     <option value="@item.ProductoId">@item.Descripcion</option>
@@ -46,8 +47,11 @@
         <input type="datetime" class="col-md-2 form-check" @bind="pedidos.Cantidad" />
     </div>
     <div class="container">
-        <h3>@disponible</h3>       
+        <label for="Disponible" class="col-md-2col-form-label" >Disponible</label>
+        <input type="number" class="col-md-2 form-check"readonly="readonly" @bind="disponible" />
+        <br />
     </div>
+    
     <div class=" container">
         <button type="button" class="btn btn-primary" @onclick="AgregarProducto">AgregarProducto</button>
     </div>
@@ -124,9 +128,12 @@
     public string Mensaje;
     Contexto db = new Contexto();
 
+
     protected override void OnInitialized()
     {
         listaProductos = controllersProductos.GetList(e => true);
+
+
 
         base.OnInitialized();
     }
@@ -157,6 +164,21 @@
         try
         {
             productos = controllersProductos.Buscar(Convert.ToInt32(ProductoSeleccionado));
+            
+
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+    public void CargarCantidad()
+    {
+        try
+        {
+            disponible = productos.Cantidad;
+
         }
         catch (Exception)
         {
@@ -167,6 +189,7 @@
     private void Limpiar()
     {
         pedidos = new Pedidos();
+
     }
     private void Eliminar()
     {
